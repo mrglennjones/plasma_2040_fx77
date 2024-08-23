@@ -2308,12 +2308,12 @@ def effect_77(hsv_values):
     return hsv_values
 
 # tester
-effects = [
+'''effects = [
     effect_74
     ]
-
+'''
 # List of effects
-'''effects = [
+effects = [
     effect_1, effect_2, effect_3, effect_4, effect_5,
     effect_6, effect_7, effect_8, effect_9, effect_10,
     effect_11, effect_12, effect_13, effect_14, effect_15,
@@ -2331,7 +2331,6 @@ effects = [
     effect_71, effect_72, effect_73, effect_74, effect_75,
     effect_76, effect_77
 ]
-'''
 
 # Initialize effect manager
 manager = EffectManager(NUM_LEDS)

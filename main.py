@@ -1524,20 +1524,36 @@ def effect_50(hsv_values):
 
 
 def effect_51(hsv_values):
-    """Shooting Star"""
+    """Northern Lights effect with flowing waves of green, blue, and purple hues."""
+    wave_speed = 0.001  # Speed at which the waves move
+    hue_shift_speed = 0.001  # Speed of hue shift over time
+    wave_amplitude = 0.5  # Amplitude of the sine wave
+    base_hue = 0.5  # Starting hue (around cyan/purple)
+
     start_time = time.ticks_ms()
 
     while time.ticks_diff(time.ticks_ms(), start_time) < TIMEOUT_DURATION:
-        for t in range(NUM_LEDS * 2):
-            brightness = max(0, 1 - abs(t - NUM_LEDS) / (NUM_LEDS / 2))
-            for i in range(NUM_LEDS):
-                hue = 0.1
-                if i == t % NUM_LEDS:
-                    hsv_values[i] = (hue, 1.0, brightness)
-                elif abs(i - t % NUM_LEDS) < 10:
-                    hsv_values[i] = (hue, 1.0, brightness * (1 - abs(i - t % NUM_LEDS) / 10))
-                led_strip.set_hsv(i, hsv_values[i][0], hsv_values[i][1], hsv_values[i][2])
-            time.sleep(0.05)
+        for i in range(NUM_LEDS):
+            # Calculate the hue based on position and time
+            position_offset = (i / NUM_LEDS) * math.pi * 2
+            time_offset = time.ticks_diff(time.ticks_ms(), start_time) * wave_speed
+            hue_variation = math.sin(position_offset + time_offset) * wave_amplitude
+            hue = (base_hue + hue_variation) % 1.0
+            
+            # Set brightness based on the sine wave for a wavy effect
+            brightness = (1 + math.sin(position_offset + time_offset)) / 2
+            
+            # Apply a gentle saturation for a more muted color palette
+            saturation = 0.6
+
+            hsv_values[i] = (hue, saturation, brightness)
+            led_strip.set_hsv(i, hsv_values[i][0], hsv_values[i][1], hsv_values[i][2])
+
+        # Gradually shift the base hue to create a slowly changing color palette
+        base_hue = (base_hue + hue_shift_speed) % 1.0
+
+        time.sleep(0.05)
+
     return hsv_values
 
 def effect_52(hsv_values):

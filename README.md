@@ -6,4 +6,6 @@
 
 the effects are randomly chosen and run for random time intervals between 3 and 20 seconds.
 
+### Note be sure to check if your led strip is RGB, mine is GRB.
+
 ![led-star-wire-3_1500x1500_crop_center](https://github.com/user-attachments/assets/8ea8297e-8e76-492f-b6f3-fc81184067c3)

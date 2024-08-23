@@ -1912,7 +1912,6 @@ def effect_70(hsv_values):
     return hsv_values
 
 
-# Effect 71: Glenn's Trails
 def effect_71(hsv_values):
     NUM_LEDS_MOVING = 5  # Number of moving LEDs
     TRAIL_LENGTH = 10
@@ -1933,14 +1932,14 @@ def effect_71(hsv_values):
         for i in range(NUM_LEDS_MOVING):
             if randrange(100) < 2:
                 hue = randrange(0, 360) / 360
-                hsv_values[positions[i]] = (hue, 1.0, BRIGHTNESS)
+                hsv_values[int(positions[i])] = (hue, 1.0, BRIGHTNESS)
             else:
-                brightness_levels[positions[i]] = BRIGHTNESS
+                brightness_levels[int(positions[i])] = BRIGHTNESS
 
-            positions[i] += directions[i]
+            positions[i] += directions[i] * speeds[i]
             if positions[i] >= NUM_LEDS or positions[i] < 0:
                 directions[i] = -directions[i]
-                positions[i] += directions[i] * 0.1
+                positions[i] = max(0, min(NUM_LEDS - 1, positions[i]))
 
         for j in range(NUM_LEDS):
             hsv_values[j] = (0.0, 0.0, brightness_levels[j])
@@ -1949,6 +1948,7 @@ def effect_71(hsv_values):
         time.sleep(min(speeds))
 
     return hsv_values
+
 
 
 # Effect 72: Glenn's Shooting Stars with Twinkling Starry Night

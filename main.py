@@ -1217,16 +1217,75 @@ def effect_39(hsv_values):
             counter = 0
 
     return hsv_values
-
-
-
+    
 def effect_40(hsv_values):
-    """Color bouncing ball effect."""
-    for i in range(NUM_LEDS):
-        pos = abs(NUM_LEDS * math.sin(i * 2 * math.pi / 100.0))
-        brightness = max(0, 1 - abs(i - pos) / (NUM_LEDS / 10))
-        hue = (i % 360) / 360.0
-        hsv_values[i] = (hue, 1.0, brightness)
+    gravity = -0.03
+    bounce_damping = 0.85
+    fade_speed = 0.01
+    pause_duration = 1.0
+
+    start_time = time.ticks_ms()  # Record the start time
+    while time.ticks_diff(time.ticks_ms(), start_time) < TIMEOUT_DURATION:
+        ball_position = NUM_LEDS - 1  # Start at the top
+        velocity = 0.0  # Initial velocity
+        hue = randrange(360) / 360.0  # Random hue for each ball
+        ball_dropping = True  # Flag to control the bouncing
+
+        while ball_dropping and time.ticks_diff(time.ticks_ms(), start_time) < TIMEOUT_DURATION:
+            # Clear the strip
+            for i in range(NUM_LEDS):
+                hsv_values[i] = (hsv_values[i][0], hsv_values[i][1], 0.0)
+
+            # Apply gravity to the velocity
+            velocity += gravity
+            ball_position += velocity
+
+            if ball_position <= 0:
+                ball_position = 0  # Clamp the position to the ground
+                velocity = -velocity * bounce_damping  # Reverse and dampen velocity
+
+                # Exit if the bounce is minimal
+                if abs(velocity) < 0.01:
+                    ball_dropping = False  # Stop the inner loop
+
+                    # Show the ball at the bottom, then fade out
+                    hsv_values[0] = (hue, 1.0, 1.0)
+                    led_strip.set_hsv(0, hsv_values[0][0], hsv_values[0][1], hsv_values[0][2])
+                    time.sleep(pause_duration)
+
+                    # Fade out the ball
+                    for brightness in [i / 100 for i in range(100, -1, -1)]:
+                        if time.ticks_diff(time.ticks_ms(), start_time) >= TIMEOUT_DURATION:
+                            break  # Respect the timeout during fading
+                        hsv_values[0] = (hue, 1.0, brightness)
+                        led_strip.set_hsv(0, hsv_values[0][0], hsv_values[0][1], hsv_values[0][2])
+                        time.sleep(fade_speed)
+
+                    break  # Exit the inner loop
+
+            # Smooth interpolation between two LEDs
+            pos_floor = int(ball_position)
+            pos_ceil = min(pos_floor + 1, NUM_LEDS - 1)
+            brightness_ceil = ball_position - pos_floor
+            brightness_floor = 1.0 - brightness_ceil
+
+            hsv_values[pos_floor] = (hue, 1.0, brightness_floor)
+            hsv_values[pos_ceil] = (hue, 1.0, brightness_ceil)
+
+            # Update the LED strip
+            for i in range(NUM_LEDS):
+                led_strip.set_hsv(i, hsv_values[i][0], hsv_values[i][1], hsv_values[i][2])
+
+            # Short delay for smoother animation
+            time.sleep(0.01)
+
+        # Ensure the bottom LED is off before starting the next drop
+        hsv_values[0] = (hue, 1.0, 0.0)
+        led_strip.set_hsv(0, hsv_values[0][0], hsv_values[0][1], hsv_values[0][2])
+
+        # Brief pause before the next ball
+        time.sleep(0.1)
+
     return hsv_values
 
 def effect_41(hsv_values):

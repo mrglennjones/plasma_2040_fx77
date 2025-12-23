@@ -1,3 +1,6 @@
+# This has been superseded by this repo https://github.com/mrglennjones/plasma_2350_fx77
+
+
 # plasma_2040_fx77
 ### 77 led strip effects for pimoroni plasma 2040
 

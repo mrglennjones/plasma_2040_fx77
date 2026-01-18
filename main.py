@@ -892,12 +892,6 @@ def effect_26(hsv_values): return effect_15(hsv_values)
 
 def effect_27(hsv_values): return effect_5(hsv_values)
 
-import time
-from random import randrange, choice, uniform
-
-import time
-from random import randrange, choice, uniform
-
 def effect_28(hsv_values):
     pacman_pos = 0
     ghost_positions = [randrange(NUM_LEDS) for _ in range(3)]
